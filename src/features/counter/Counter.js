@@ -30,7 +30,7 @@ export function Counter() {
           aria-label="Decrement value"
           onClick={() => dispatch(decrement())}
         >
-          -
+          
         </button>
       </div>
       <div className={styles.row}>
