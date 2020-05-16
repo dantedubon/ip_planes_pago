@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import subscriptionReducer from './pages/Subscription/subscriptionSlice';
+import globalSlice from './globalSlice';
 
 export default configureStore({
   reducer: {
-    counter: counterReducer,
+    clientData: subscriptionReducer,
+    global: globalSlice
   },
 });
