@@ -8,7 +8,7 @@ import * as yup from "yup";
 import { useAsyncTask } from "react-hooks-async";
 import { useDispatch } from "react-redux";
 import { startLoad, endLoad } from "../../globalSlice";
-import {isEmpty} from "lodash"
+import { isEmpty } from "lodash";
 
 const fetchClientData = async (
   { signal },
@@ -23,13 +23,22 @@ const fetchClientData = async (
     headers: myHeaders,
     redirect: "follow",
   };
-
   const response = await fetch(
-    "http://www.mocky.io/v2/5ebf26ce3200005c000c33a5",
+    "http://www.mocky.io/v2/5ebf67953200005c000c342d",
     requestOptions
   );
 
   const data = await response.json();
+
+  if (response.status !== 200) {
+    throw data.details;
+  }
+
+  // const response = await fetch(
+  //   "http://www.mocky.io/v2/5ebf26ce3200005c000c33a5",
+  //   requestOptions
+  // );
+
   return data;
 };
 
@@ -40,6 +49,7 @@ const schema = yup.object({
     .number()
     .typeError("Este campo solo acepta numeros")
     .required("Campo Requerido"),
+  Propietario: yup.boolean().required("Debe seleccionar una opción"),
   Identidad: yup.string().when("Propietario", {
     is: false,
     then: yup.string().required("La identidad es requerida"),
@@ -55,7 +65,9 @@ const Subscription = () => {
 
   const task = useAsyncTask(fetchClientData);
 
-  const { pending, started, start, error, result } = task;
+  const { pending, started, start, error: apiError, result } = task;
+  console.log("Error", apiError);
+  console.log("Result", result);
 
   if (result) {
     dispatch(setClientData(result));
@@ -104,7 +116,7 @@ const Subscription = () => {
             />
             <InputIp
               controlId="VIN"
-              label="Numero de Motor, Vin o Chasis"
+              label="Numero de Motor, Vin o Chasis*"
               type="text"
               name="VIN"
               helpText="Ingresar los últimos 4 dígitos de motor, VIN o chasis al cual desea subscribir el pago."
