@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export const subscriptionSlice = createSlice({
-    name: 'subscription',
+    name: 'clientData',
     initialState: {
        placa: '',
        rtn: '',
@@ -27,6 +27,6 @@ export const subscriptionSlice = createSlice({
 
 export const {setClientData} = subscriptionSlice.actions;
 
-export const selectClientData = state => state.subscription
+export const selectClientData = state => state.clientData
 
 export default subscriptionSlice.reducer;

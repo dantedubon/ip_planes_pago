@@ -153,3 +153,8 @@ body {
     width: 100px;
     height: 100px;
 }
+
+.list-item{
+  border-bottom-width: 0;
+ 
+}
