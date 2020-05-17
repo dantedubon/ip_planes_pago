@@ -9,7 +9,7 @@ import { isEmpty } from "lodash";
 import useAPICall from "../../useAPICall";
 import { setClientData } from "./subscriptionSlice";
 import { fetchClientData } from "../../services/moraApi";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 
 const queryString = require("query-string");
 
@@ -33,15 +33,18 @@ const schema = yup.object({
 
 const Subscription = () => {
   const { search } = useLocation();
-  const { placa } = queryString.parse(search);
-
+  const history = useHistory();
   const dispatch = useDispatch();
+  const { placa } = queryString.parse(search);
 
   const [result, error, start] = useAPICall(fetchClientData);
 
   useEffect(() => {
-    dispatch(setClientData(result));
-  }, [result, dispatch]);
+    if (result) {
+      dispatch(setClientData(result));
+      history.push("/account");
+    }
+  }, [result, dispatch, history]);
 
   return (
     <div>

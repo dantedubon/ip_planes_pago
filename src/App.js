@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { selectLoading } from "./app/globalSlice";
 import CircleLoader from "react-spinners/CircleLoader";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Account from "./app/pages/Account/Account";
 
 function App() {
   const load = useSelector(selectLoading);
@@ -30,6 +31,9 @@ function App() {
                 <Switch>
                   <Route exact path="/">
                     <Subscription />
+                  </Route>
+                  <Route exact path="/account">
+                    <Account/>
                   </Route>
                 </Switch>
               </div>
