@@ -8,7 +8,7 @@ import * as yup from "yup";
 import { isEmpty } from "lodash";
 import useAPICall from '../../useAPICall';
 import {setClientData} from './subscriptionSlice';
-
+import {fetchClientData} from '../../services/moraApi';
 
 
 const schema = yup.object({
@@ -32,7 +32,7 @@ const schema = yup.object({
 const Subscription = () => {
   const dispatch = useDispatch();
  
-  const [result, error, start ] = useAPICall();
+  const [result, error, start ] = useAPICall(fetchClientData);
 
   useEffect(()=> {
     dispatch(setClientData(result))
