@@ -26,17 +26,7 @@ function App() {
                     </div>
                   </div>
                 )}
-                <img
-                  className="card-media mx-auto d-block"
-                  src={process.env.PUBLIC_URL + "/logo IP.png"}
-                  alt=""
-                />
-                <h4 className="card-title">Subscripción de Plan de Pago</h4>
-                <p className="card-description">
-                  Por favor ingrese el número de RTN del propietario según el
-                  sistema a el número de motor,VIN o Chasis
-                </p>
-                <hr />
+
                 <Switch>
                   <Route exact path="/">
                     <Subscription />
@@ -45,6 +35,7 @@ function App() {
               </div>
             </div>
           </div>
+          <div />
         </div>
       </div>
     </Router>

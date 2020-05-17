@@ -9,10 +9,13 @@ import { isEmpty } from "lodash";
 import useAPICall from "../../useAPICall";
 import { setClientData } from "./subscriptionSlice";
 import { fetchClientData } from "../../services/moraApi";
+import { useLocation } from "react-router-dom";
+
+const queryString = require("query-string");
 
 const schema = yup.object({
   RTN: yup.string().required("Campo Requerido"),
-  Placa: yup.string(),
+
   VIN: yup
     .number()
     .typeError("Este campo solo acepta numeros")
@@ -29,6 +32,9 @@ const schema = yup.object({
 });
 
 const Subscription = () => {
+  const { search } = useLocation();
+  const { placa } = queryString.parse(search);
+
   const dispatch = useDispatch();
 
   const [result, error, start] = useAPICall(fetchClientData);
@@ -37,16 +43,24 @@ const Subscription = () => {
     dispatch(setClientData(result));
   }, [result, dispatch]);
 
-  console.log("Result", result);
-  console.log("Error", error);
-
   return (
     <div>
+      <img
+        className="card-media mx-auto d-block"
+        src={process.env.PUBLIC_URL + "/logo IP.png"}
+        alt=""
+      />
+      <h4 className="card-title">Subscripción de Plan de Pago</h4>
+      <p className="card-description">
+        Por favor ingrese el número de RTN del propietario según el sistema a el
+        número de motor,VIN o Chasis
+      </p>
+      <hr />
       <Formik
         validationSchema={schema}
         onSubmit={(values, actions) =>
           start({
-            Placa: values.Placa,
+            Placa: placa,
             RTN: values.RTN,
             VIN: values.VIN,
           })
@@ -54,7 +68,7 @@ const Subscription = () => {
         initialValues={{
           RTN: "",
           VIN: "",
-          Placa: "",
+
           Propietario: undefined,
           Identidad: undefined,
           Nombre: undefined,
@@ -76,7 +90,6 @@ const Subscription = () => {
               name="VIN"
               helpText="Ingresar los últimos 4 dígitos de motor, VIN o chasis al cual desea subscribir el pago."
             />
-            <InputIp controlId="Placa" label="Placa" type="text" name="Placa" />
 
             <h6>¿El vehículo se encuentra registrado a su nombre?</h6>
 
@@ -122,9 +135,8 @@ const Subscription = () => {
             <hr />
 
             {error && (
-              <div class="alert alert-danger alert-dismissible fade show">
+              <div className="alert alert-danger alert-dismissible fade show">
                 <strong>Error!</strong> {error}
-               
               </div>
             )}
             <div className="form-actions mt-3">
