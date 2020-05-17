@@ -1,15 +1,14 @@
 // Render Prop
 
-import React, { useEffect }  from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Formik, Form } from "formik";
 import InputIp from "../../components/inputIp";
 import * as yup from "yup";
 import { isEmpty } from "lodash";
-import useAPICall from '../../useAPICall';
-import {setClientData} from './subscriptionSlice';
-import {fetchClientData} from '../../services/moraApi';
-
+import useAPICall from "../../useAPICall";
+import { setClientData } from "./subscriptionSlice";
+import { fetchClientData } from "../../services/moraApi";
 
 const schema = yup.object({
   RTN: yup.string().required("Campo Requerido"),
@@ -31,13 +30,15 @@ const schema = yup.object({
 
 const Subscription = () => {
   const dispatch = useDispatch();
- 
-  const [result, error, start ] = useAPICall(fetchClientData);
 
-  useEffect(()=> {
-    dispatch(setClientData(result))
-  }, [result, dispatch])
- 
+  const [result, error, start] = useAPICall(fetchClientData);
+
+  useEffect(() => {
+    dispatch(setClientData(result));
+  }, [result, dispatch]);
+
+  console.log("Result", result);
+  console.log("Error", error);
 
   return (
     <div>
@@ -119,6 +120,13 @@ const Subscription = () => {
               />
             )}
             <hr />
+
+            {error && (
+              <div class="alert alert-danger alert-dismissible fade show">
+                <strong>Error!</strong> {error}
+               
+              </div>
+            )}
             <div className="form-actions mt-3">
               <button
                 type="submit"
