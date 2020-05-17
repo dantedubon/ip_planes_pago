@@ -1,46 +1,15 @@
 // Render Prop
 
-import React, { useEffect } from "react";
+import React, { useEffect }  from "react";
+import { useDispatch } from "react-redux";
 import { Formik, Form } from "formik";
 import InputIp from "../../components/inputIp";
-import { setClientData } from "./subscriptionSlice";
 import * as yup from "yup";
-import { useAsyncTask } from "react-hooks-async";
-import { useDispatch } from "react-redux";
-import { startLoad, endLoad } from "../../globalSlice";
 import { isEmpty } from "lodash";
+import useAPICall from '../../useAPICall';
+import {setClientData} from './subscriptionSlice';
 
-const fetchClientData = async (
-  { signal },
-  { RTN, Placa, VIN, Identidad, Nombre }
-) => {
-  console.log("RTN", RTN);
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", "Basic UGxhblBhZ286ZGVtbw==");
 
-  var requestOptions = {
-    method: "GET",
-    headers: myHeaders,
-    redirect: "follow",
-  };
-  const response = await fetch(
-    "http://www.mocky.io/v2/5ebf67953200005c000c342d",
-    requestOptions
-  );
-
-  const data = await response.json();
-
-  if (response.status !== 200) {
-    throw data.details;
-  }
-
-  // const response = await fetch(
-  //   "http://www.mocky.io/v2/5ebf26ce3200005c000c33a5",
-  //   requestOptions
-  // );
-
-  return data;
-};
 
 const schema = yup.object({
   RTN: yup.string().required("Campo Requerido"),
@@ -62,28 +31,13 @@ const schema = yup.object({
 
 const Subscription = () => {
   const dispatch = useDispatch();
+ 
+  const [result, error, start ] = useAPICall();
 
-  const task = useAsyncTask(fetchClientData);
-
-  const { pending, started, start, error: apiError, result } = task;
-  console.log("Error", apiError);
-  console.log("Result", result);
-
-  if (result) {
-    dispatch(setClientData(result));
-  }
-
-  useEffect(() => {
-    if (started) {
-      dispatch(startLoad());
-    }
-  });
-
-  useEffect(() => {
-    if (!pending) {
-      dispatch(endLoad());
-    }
-  });
+  useEffect(()=> {
+    dispatch(setClientData(result))
+  }, [result, dispatch])
+ 
 
   return (
     <div>
