@@ -27,13 +27,18 @@ function App() {
                     </div>
                   </div>
                 )}
+                <img
+                  className="card-media mx-auto d-block"
+                  src={process.env.PUBLIC_URL + "/logo IP.png"}
+                  alt=""
+                />
 
                 <Switch>
                   <Route exact path="/">
                     <Subscription />
                   </Route>
                   <Route exact path="/account">
-                    <Account/>
+                    <Account />
                   </Route>
                 </Switch>
               </div>
