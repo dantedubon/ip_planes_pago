@@ -1,17 +1,99 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { selectClientData } from "../Subscription/subscriptionSlice";
-import { fetchCuotas } from "../../services/cuotasApi";
+import { fetchCuotas, fetchDistribucionCuotas } from "../../services/cuotasApi";
 import { Dropdown, DropdownButton } from "react-bootstrap";
 import useAPICall from "../../useAPICall";
 
-const Cuotas = ({ cuotas, setSelectedCuota }) => {
+const currencyFormatter = (data) => {
+  if (data === 0) {
+    return "-";
+  }
+  return new Intl.NumberFormat("es-HN", {
+    style: "currency",
+    currency: "HNL",
+  }).format(data);
+};
+const dateFormatter = (data) => {
+  const date = new Date(data);
+  const dateFormat = new Intl.DateTimeFormat("es", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
+  const [
+    { value: day },
+    ,
+    { value: month },
+    ,
+    { value: year },
+  ] = dateFormat.formatToParts(date);
 
-    const [title, setTitle] = useState('Seleccione las cuotas');
-    const handleSelect = (e) => {
-        setSelectedCuota(e);
-        setTitle(`${e} cuotas`);
-    }
+
+
+  return `${day}/${month}/${year}`;
+};
+
+const DistribucionCuotas = ({ distribucion }) => {
+  if (!distribucion) {
+    return null;
+  }
+
+  const { distribucionCuotas } = distribucion;
+
+  return (
+    <>
+      <h5 className="mt-4">Distribución de Cuotas</h5>
+      <div className="table-responsive">
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">Cuota</th>
+              <th scope="col">Fecha de Pago</th>
+              <th scope="col">Tasa y multa vehícular</th>
+              <th scope="col">Tasa y multa municipal</th>
+              <th scope="col">Contribución SPS Siglo XXI</th>
+              <th scope="col">Total a pagar</th>
+              <th scope="col">No. IP-150</th>
+            </tr>
+          </thead>
+          <tbody>
+            {distribucionCuotas.detalle.map((periodo) => {
+              return (
+                <tr key={periodo.nroCuota}>
+                  <th scope="row">{periodo.nroCuota}</th>
+                  <td>{dateFormatter(periodo.fechaPago)}</td>
+                  <td>{currencyFormatter(periodo.tuav)}</td>
+                  <td>{currencyFormatter(periodo.tvm)}</td>
+                  <td>{currencyFormatter(periodo.cspssxxi)}</td>
+                  <td>{periodo.total}</td>
+                  <td>{periodo.comprobante}</td>
+                </tr>
+              );
+            })}
+
+            <tr>
+              <th scope="row">Total</th>
+              <td>{currencyFormatter(distribucionCuotas.tuav)}</td>
+              <td>{currencyFormatter(distribucionCuotas.tvm)}</td>
+              <td>{currencyFormatter(distribucionCuotas.cspssxxi)}</td>
+              <td>-</td>
+              <td>{currencyFormatter(distribucionCuotas.total)}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+};
+
+const Cuotas = ({ cuotas, setSelectedCuota }) => {
+  const [title, setTitle] = useState("Seleccione las cuotas");
+  const handleSelect = (e) => {
+    setSelectedCuota(e);
+    setTitle(`${e} cuotas`);
+  };
   return (
     <DropdownButton
       id="cuotas"
@@ -21,23 +103,18 @@ const Cuotas = ({ cuotas, setSelectedCuota }) => {
       onSelect={handleSelect}
     >
       {cuotas.map((cuota) => {
-        return <Dropdown.Item key={cuota.clave} eventKey={cuota.valor}  >{`${cuota.valor} cuotas`}</Dropdown.Item>;
+        return (
+          <Dropdown.Item
+            key={cuota.clave}
+            eventKey={cuota.valor}
+          >{`${cuota.valor} cuotas`}</Dropdown.Item>
+        );
       })}
     </DropdownButton>
   );
 };
 
 const DetalleEstadoCuenta = ({ periodo }) => {
-  const currencyFormatter = (data) => {
-    if (data === 0) {
-      return "-";
-    }
-    return new Intl.NumberFormat("es-HN", {
-      style: "currency",
-      currency: "HNL",
-    }).format(data);
-  };
-
   return (
     <tr>
       <th scope="row">{periodo.periodo}</th>
@@ -90,18 +167,27 @@ const Account = () => {
   );
 
   const [cuotas, setCuotas] = useState([]);
-  const [result, error, start] = useAPICall(fetchCuotas);
+  const [resultCuotas, , startCuotas] = useAPICall(fetchCuotas);
+  const [resultDistribucion, , startDistribucion] = useAPICall(
+    fetchDistribucionCuotas
+  );
   const [selectedCuota, setSelectedCuota] = useState(0);
 
   useEffect(() => {
-    start();
-  }, [start]);
+    startCuotas();
+  }, [startCuotas]);
 
   useEffect(() => {
-    if (result) {
-      setCuotas(result);
+    if (resultCuotas) {
+      setCuotas(resultCuotas);
     }
-  }, [result]);
+  }, [resultCuotas]);
+
+  useEffect(() => {
+    if (selectedCuota !== 0) {
+      startDistribucion(placa, selectedCuota);
+    }
+  }, [placa, selectedCuota, startDistribucion]);
 
   return (
     <div>
@@ -132,7 +218,8 @@ const Account = () => {
       <p className="text-muted mt-3">
         Seleccione el número de cuotas para su Plan de Pago
       </p>
-      <Cuotas cuotas={cuotas} setSelectedCuota={setSelectedCuota}/>
+      <Cuotas cuotas={cuotas} setSelectedCuota={setSelectedCuota} />
+      <DistribucionCuotas distribucion={resultDistribucion} />
     </div>
   );
 };

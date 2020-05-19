@@ -11,3 +11,16 @@ export const fetchCuotas = async ({signal}) => {
     }
     return data;
 }
+
+export const fetchDistribucionCuotas = async({signal}, {placa, cuotas}) => {
+    const response = await fetch(
+        'http://www.mocky.io/v2/5ec35efe300000890039c004'
+    );
+
+    const data = await response.json();
+    if(response.status !== 200) {
+        throw new Error('Error fetching data')
+
+    }
+    return data;
+}
