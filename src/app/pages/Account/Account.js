@@ -5,17 +5,23 @@ import { fetchCuotas } from "../../services/cuotasApi";
 import { Dropdown, DropdownButton } from "react-bootstrap";
 import useAPICall from "../../useAPICall";
 
-const Cuotas = ({ cuotas }) => {
-  console.log(cuotas);
+const Cuotas = ({ cuotas, setSelectedCuota }) => {
+
+    const [title, setTitle] = useState('Seleccione las cuotas');
+    const handleSelect = (e) => {
+        setSelectedCuota(e);
+        setTitle(`${e} cuotas`);
+    }
   return (
     <DropdownButton
       id="cuotas"
-      title="Seleccione plan de pago"
+      title={title}
       variant="primary"
       drop="down"
+      onSelect={handleSelect}
     >
       {cuotas.map((cuota) => {
-        return <Dropdown.Item key={cuota.clave}>{`${cuota.valor} cuotas`}</Dropdown.Item>;
+        return <Dropdown.Item key={cuota.clave} eventKey={cuota.valor}  >{`${cuota.valor} cuotas`}</Dropdown.Item>;
       })}
     </DropdownButton>
   );
@@ -85,6 +91,7 @@ const Account = () => {
 
   const [cuotas, setCuotas] = useState([]);
   const [result, error, start] = useAPICall(fetchCuotas);
+  const [selectedCuota, setSelectedCuota] = useState(0);
 
   useEffect(() => {
     start();
@@ -125,7 +132,7 @@ const Account = () => {
       <p className="text-muted mt-3">
         Seleccione el número de cuotas para su Plan de Pago
       </p>
-      <Cuotas cuotas={cuotas} />
+      <Cuotas cuotas={cuotas} setSelectedCuota={setSelectedCuota}/>
     </div>
   );
 };
