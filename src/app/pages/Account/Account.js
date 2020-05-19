@@ -1,15 +1,37 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { selectClientData } from "../Subscription/subscriptionSlice";
+import { fetchCuotas } from "../../services/cuotasApi";
+import { Dropdown, DropdownButton } from "react-bootstrap";
+import useAPICall from "../../useAPICall";
+
+const Cuotas = ({ cuotas }) => {
+  console.log(cuotas);
+  return (
+    <DropdownButton
+      id="cuotas"
+      title="Seleccione plan de pago"
+      variant="primary"
+      drop="down"
+    >
+      {cuotas.map((cuota) => {
+        return <Dropdown.Item key={cuota.clave}>{`${cuota.valor} cuotas`}</Dropdown.Item>;
+      })}
+    </DropdownButton>
+  );
+};
 
 const DetalleEstadoCuenta = ({ periodo }) => {
-
-
-  const currencyFormatter = (data) =>
-    new Intl.NumberFormat("es-HN", {
+  const currencyFormatter = (data) => {
+    if (data === 0) {
+      return "-";
+    }
+    return new Intl.NumberFormat("es-HN", {
       style: "currency",
       currency: "HNL",
     }).format(data);
+  };
+
   return (
     <tr>
       <th scope="row">{periodo.periodo}</th>
@@ -60,7 +82,19 @@ const Account = () => {
   const { placa, propietario, estadoCuenta, rtn } = useSelector(
     selectClientData
   );
-  console.log(placa);
+
+  const [cuotas, setCuotas] = useState([]);
+  const [result, error, start] = useAPICall(fetchCuotas);
+
+  useEffect(() => {
+    start();
+  }, [start]);
+
+  useEffect(() => {
+    if (result) {
+      setCuotas(result);
+    }
+  }, [result]);
 
   return (
     <div>
@@ -91,6 +125,7 @@ const Account = () => {
       <p className="text-muted mt-3">
         Seleccione el número de cuotas para su Plan de Pago
       </p>
+      <Cuotas cuotas={cuotas} />
     </div>
   );
 };
