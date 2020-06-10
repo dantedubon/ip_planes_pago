@@ -68,26 +68,88 @@ body {
   color: white;
   border: 1px solid #24275D;
 }
-
-.modal .modal-content .modal-header {
+ .modal-content .modal-header {
   background-color: #24275D;
 }
 
-.modal .modal-content .modal-body .modal-icon {
+ .modal-content .modal-body .modal-icon {
   width: 60px;
   margin-bottom: 10px;
 }
 
-.modal .modal-content .modal-body .text-description {
+ .modal-content .modal-body .text-description {
   text-align: center;
   font-weight: 500;
 }
 
-.modal .modal-content .modal-body .card-description {
+ .modal-content .modal-body .card-description {
   text-align: center;
   opacity: .6;
   font-weight: 400;
 }
+
+.modal-content .modal-header .close {
+  float: right;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 1px 0 #fff;
+  color: white;
+  opacity: .5;
+}
+
+.modal-content .modal-body {
+  text-align: center;
+  color: #334652;
+}
+
+ .modal-content .modal-body .alert {
+  margin: auto;
+  width: 80%;
+  text-align: center;
+  color: #334652;
+}
+
+ .modal-content .modal-body .alert-primary {
+  background-color: white;
+  border-color: #5E8BB7;
+}
+
+ .modal-content .modal-body .modal-icon {
+  width: 60px;
+  margin-bottom: 10px;
+}
+
+.modal .modal-content .modal-body .qr-box {
+  width: 150px;
+  margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+ .modal-content .modal-body .link-container {
+  margin: auto;
+}
+
+ .modal-content .modal-body .text-description {
+  text-align: center;
+  font-weight: 500;
+}
+
+ .modal-content .modal-body .card-description {
+  text-align: center;
+  opacity: .6;
+  font-weight: 400;
+}
+
+ .modal-content .modal-footer button {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
 
 .form-subscripcion .card {
   margin: 60px auto;

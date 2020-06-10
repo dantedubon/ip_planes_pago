@@ -1,12 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {selectClientData} from "../Subscription/subscriptionSlice";
-import {fetchCuotas, fetchDistribucionCuotas} from "../../services/cuotasApi";
-import {Dropdown, DropdownButton, Button} from "react-bootstrap";
+import {fetchCuotas, fetchDistribucionCuotas, subscribePlanPago} from "../../services/cuotasApi";
+import {Button, Dropdown, DropdownButton, Modal} from "react-bootstrap";
 import useAPICall from "../../useAPICall";
-import {
-    useGoogleReCaptcha
-} from 'react-google-recaptcha-v3';
+import QRCode from "qrcode.react";
+
+import {useGoogleReCaptcha} from 'react-google-recaptcha-v3';
+
+import {useHistory} from "react-router-dom";
+
 
 const currencyFormatter = (data) => {
     if (data === 0) {
@@ -163,25 +166,78 @@ const EstadoCuenta = ({estadoCuenta}) => {
     );
 };
 
-const Account =  () => {
+const ResultModal = ({showModal, handleClose, codigoPlanPago}) => {
+
+    const url = `www.google.com`;
+    return (
+        <Modal show={showModal} onHide={handleClose}>
+
+            <Modal.Header closeButton>
+                <Modal.Title>Confirmación de Plan de Pago</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p className="text-description mt-4">Se ha generado el siguiente número de plan de pago: </p>
+                <div className="alert alert-primary" role="alert">
+                    <h4>{codigoPlanPago}</h4>
+                </div>
+                <hr/>
+                <p className="text-description mb-0">Escanee con su celular el siguiente código QR o ingrese a la
+                    página mediante el link.</p>
+                <QRCode className="qr-box" value={url}/>
+                <div className="link-container">
+                    <a className="links" href={url}>{url}</a>
+                </div>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                    Cerrar
+                </Button>
+                <Button variant="primary" onClick={handleClose}>
+                    Imprimir Convenio
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    )
+}
+
+const Account = () => {
+    const history = useHistory();
     const {placa, propietario, estadoCuenta, rtn} = useSelector(
         selectClientData
     );
+    if (!placa) {
+        history.push("/")
+    }
 
-    const { executeRecaptcha } = useGoogleReCaptcha();
+    const {executeRecaptcha} = useGoogleReCaptcha();
 
     const [cuotas, setCuotas] = useState([]);
     const [resultCuotas, , startCuotas] = useAPICall(fetchCuotas);
     const [resultDistribucion, , startDistribucion] = useAPICall(
         fetchDistribucionCuotas
     );
+
+    const [token, setToken] = useState(null);
+
     const [selectedCuota, setSelectedCuota] = useState(0);
+
+    const [resultSubscription, , startPlanPagos] = useAPICall(subscribePlanPago);
+
+    const [showModal, setShowModal] = useState(false);
 
     const acceptPlan = async () => {
         const token = await executeRecaptcha('submit')
-        console.log(token)
+        setToken(token)
     }
+    useEffect(() => {
+        if (token) {
+            console.log(token)
+            setShowModal(true)
+            // startPlanPagos({placa, cuotas: selectedCuota, id: rtn, name: propietario, token});
+        }
+    }, [token, startPlanPagos])
 
+    console.log(resultSubscription)
     useEffect(() => {
         startCuotas();
     }, [startCuotas]);
@@ -199,52 +255,56 @@ const Account =  () => {
     }, [placa, selectedCuota, startDistribucion]);
 
     return (
-        <div className="card w-100">
-            <img
-                className="card-media mx-auto d-block"
-                src={process.env.PUBLIC_URL + "/logo IP.png"}
-                alt=""
-            />
-            <div className="card-body">
-                <div id="subscription">
-                    <h4 className="card-title">Plan de pago</h4>
-                    <p className="card-description">
-                        Confirme sus datos e ingrese el plan de pago de conveniencia.
-                    </p>
-                    <hr/>
-                    <div className="plan-pago">
-                        <h5>Datos personales</h5>
-                        <ul className="list-group">
-                            <li className="list-group-item">
-                                <p className="label-list">Placa de vehículo:</p>
-                                <p className="info-list">{placa}</p>
-                            </li>
-                            <li className="list-group-item">
-                                <p className="label-list">RTN:</p>
-                                <p className="info-list">{rtn}</p>
-                            </li>
-                            <li className="list-group-item">
-                                <p className="label-list">Nombre del propietario:</p>
-                                <p className="info-list">{propietario}</p>
-                            </li>
-                        </ul>
-                        <EstadoCuenta estadoCuenta={estadoCuenta}/>
-                    </div>
+        <>
+            <ResultModal showModal={showModal} codigoPlanPago={888888} handleClose={() => setShowModal(false)}/>
+            <div className="card w-100">
+                <img
+                    className="card-media mx-auto d-block"
+                    src={process.env.PUBLIC_URL + "/logo IP.png"}
+                    alt=""
+                />
+                <div className="card-body">
+                    <div id="subscription">
+                        <h4 className="card-title">Plan de pago</h4>
+                        <p className="card-description">
+                            Confirme sus datos e ingrese el plan de pago de conveniencia.
+                        </p>
+                        <hr/>
+                        <div className="plan-pago">
+                            <h5>Datos personales</h5>
+                            <ul className="list-group">
+                                <li className="list-group-item">
+                                    <p className="label-list">Placa de vehículo:</p>
+                                    <p className="info-list">{placa}</p>
+                                </li>
+                                <li className="list-group-item">
+                                    <p className="label-list">RTN:</p>
+                                    <p className="info-list">{rtn}</p>
+                                </li>
+                                <li className="list-group-item">
+                                    <p className="label-list">Nombre del propietario:</p>
+                                    <p className="info-list">{propietario}</p>
+                                </li>
+                            </ul>
+                            <EstadoCuenta estadoCuenta={estadoCuenta}/>
+                        </div>
 
-                    <p className="text-muted mt-3">
-                        Seleccione el número de cuotas para su Plan de Pago
-                    </p>
-                    <Cuotas cuotas={cuotas} setSelectedCuota={setSelectedCuota}/>
-                    <DistribucionCuotas distribucion={resultDistribucion}/>
-                    <div className="d-flex justify-content-center mt-4">
-                        {selectedCuota !==0 && <Button onClick = {acceptPlan}>
-                            Aceptar Plan de Pago
-                        </Button>}
-                    </div>
+                        <p className="text-muted mt-3">
+                            Seleccione el número de cuotas para su Plan de Pago
+                        </p>
+                        <Cuotas cuotas={cuotas} setSelectedCuota={setSelectedCuota}/>
+                        <DistribucionCuotas distribucion={resultDistribucion}/>
+                        <div className="d-flex justify-content-center mt-4">
+                            {selectedCuota !== 0 && <Button onClick={acceptPlan}>
+                                Aceptar Plan de Pago
+                            </Button>}
+                        </div>
 
+                    </div>
                 </div>
             </div>
-        </div>
+
+        </>
 
 
     );

@@ -62,3 +62,38 @@ export const fetchDistribucionCuotas = async({signal}, {placa, cuotas}) => {
     }
     return data;
 }
+
+export const subscribePlanPago = async ({signal}, {placa, cuotas, id, name, token}) => {
+    const url = `${process.env.REACT_APP_BASE_URL_API}/planesPago`;
+    const myHeaders = new Headers();
+    const auth = GetAuth();
+    const body = {
+        placa: placa,
+        nroCuotas: cuotas,
+        identificacion: id,
+        nombre: name,
+        token: token
+    }
+
+    myHeaders.append("Content-Type","application/json");
+    myHeaders.append("Authorization", `Basic ${auth}`);
+
+    const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        redirect: "follow",
+        body: JSON.stringify(body)
+    };
+
+    const response = await fetch(
+        url,
+        requestOptions
+    );
+
+    const data = await response.json();
+    if(response.status !== 200) {
+        throw data.details;
+
+    }
+    return data;
+}
