@@ -5,7 +5,7 @@
 
 body {
   font-family: 'Roboto', sans-serif;
-  background-color: F7F8F9;
+  background-color: #F7F8F9;
   color: #334652;
 }
 
@@ -127,7 +127,6 @@ body {
     width: 50%;
   }
 }
-
 
 #overlay {
   background: #ffffff;
