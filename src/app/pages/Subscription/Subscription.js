@@ -53,8 +53,8 @@ const Subscription = () => {
     }
   }, [result, dispatch, history]);
 
-  const handleSubmit= (RTN, VIN, Identidad, nombreRegistrado) => {
-      dispatch(setClientData({Identidad, nombreRegistrado}))
+  const handleSubmit= (RTN, VIN, identidad, nombreRegistrado) => {
+      dispatch(setClientData({identidad, nombreRegistrado}))
         start({
             Placa: placa,
             RTN: RTN,

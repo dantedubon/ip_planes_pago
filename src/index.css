@@ -238,3 +238,7 @@ body {
 .plan-pago .list-group .list-group-item .info-list {
   font-weight: 500;
 }
+
+.modal-title{
+    color: white;
+}

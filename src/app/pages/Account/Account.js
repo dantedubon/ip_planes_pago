@@ -168,12 +168,12 @@ const EstadoCuenta = ({estadoCuenta}) => {
 
 const ResultModal = ({showModal, handleClose, codigoPlanPago}) => {
 
-    const url = `www.google.com`;
+    const url = `${process.env.REACT_APP_PLAN}/${codigoPlanPago}`;
     return (
         <Modal show={showModal} onHide={handleClose}>
 
             <Modal.Header closeButton>
-                <Modal.Title>Confirmación de Plan de Pago</Modal.Title>
+                <Modal.Title className="modal-title">Confirmación de Plan de Pago</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <p className="text-description mt-4">Se ha generado el siguiente número de plan de pago: </p>
@@ -202,7 +202,7 @@ const ResultModal = ({showModal, handleClose, codigoPlanPago}) => {
 
 const Account = () => {
     const history = useHistory();
-    const {placa, propietario, estadoCuenta, rtn} = useSelector(
+    const {placa, propietario, estadoCuenta, rtn, identidad, nombreRegistrado } = useSelector(
         selectClientData
     );
     if (!placa) {
@@ -223,6 +223,8 @@ const Account = () => {
 
     const [resultSubscription, , startPlanPagos] = useAPICall(subscribePlanPago);
 
+    const [codigoPlanDePago, setCodigoPlanDePago] = useState(0);
+
     const [showModal, setShowModal] = useState(false);
 
     const acceptPlan = async () => {
@@ -231,13 +233,19 @@ const Account = () => {
     }
     useEffect(() => {
         if (token) {
-            console.log(token)
-            setShowModal(true)
-            // startPlanPagos({placa, cuotas: selectedCuota, id: rtn, name: propietario, token});
+             startPlanPagos({placa, cuotas: selectedCuota, id: identidad, name: nombreRegistrado, token});
         }
     }, [token, startPlanPagos])
 
-    console.log(resultSubscription)
+    useEffect(()=> {
+        if(resultSubscription){
+            const {registro} = resultSubscription;
+            setCodigoPlanDePago(registro);
+            setShowModal(true)
+        }
+
+    }, [resultSubscription]);
+
     useEffect(() => {
         startCuotas();
     }, [startCuotas]);
@@ -256,7 +264,7 @@ const Account = () => {
 
     return (
         <>
-            <ResultModal showModal={showModal} codigoPlanPago={888888} handleClose={() => setShowModal(false)}/>
+            <ResultModal showModal={showModal} codigoPlanPago={codigoPlanDePago} handleClose={() => setShowModal(false)}/>
             <div className="card w-100">
                 <img
                     className="card-media mx-auto d-block"

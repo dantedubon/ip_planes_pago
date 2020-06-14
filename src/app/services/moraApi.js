@@ -2,7 +2,7 @@ import GetAuth from './auth';
 
 export const fetchClientData = async (
     {signal},
-    {RTN, Placa, VIN, Identidad, Nombre}
+    {RTN, Placa, VIN}
 ) => {
 
     const myHeaders = new Headers();
