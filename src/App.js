@@ -6,6 +6,7 @@ import CircleLoader from "react-spinners/CircleLoader";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import Account from "./app/pages/Account/Account";
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
+import PlanPagos from "./app/pages/PlanPago/PlanPago";
 
 
 function App() {
@@ -39,6 +40,9 @@ function App() {
                                     <Account/>
                                 </GoogleReCaptchaProvider>
 
+                            </Route>
+                            <Route exact path="/planpagos/:planId">
+                                <PlanPagos/>
                             </Route>
                         </Switch>
                     </div>

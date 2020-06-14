@@ -97,3 +97,31 @@ export const subscribePlanPago = async ({signal}, {placa, cuotas, id, name, toke
     }
     return data;
 }
+
+export const GetPlanPago = async ({signal}, {planId}) => {
+    const url = `${process.env.REACT_APP_BASE_URL_API}/planesPago/${planId}`;
+    const myHeaders = new Headers();
+    const auth = GetAuth();
+
+
+    myHeaders.append("Content-Type","application/json");
+    myHeaders.append("Authorization", `Basic ${auth}`);
+
+    const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow"
+    };
+
+    const response = await fetch(
+        url,
+        requestOptions
+    );
+
+    const data = await response.json();
+    if(response.status !== 200) {
+        throw data.details;
+
+    }
+    return data;
+}
