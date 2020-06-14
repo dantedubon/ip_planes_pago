@@ -23,7 +23,14 @@ const schema = yup.object({
   Propietario: yup.boolean().required("Debe seleccionar una opción"),
   Identidad: yup.string().when("Propietario", {
     is: false,
-    then: yup.string().required("La identidad es requerida"),
+    then: yup
+        .string()
+        .required("La identidad es requerida")
+        .matches(/^[0-9]+$/, "Solo se aceptan digitos")
+        .min(13, 'Debe de ser exactamente 13 digitos')
+        .max(13, 'Debe de ser exactamente 13 digitos')
+
+
   }),
   Nombre: yup.string().when("Propietario", {
     is: false,
@@ -46,6 +53,15 @@ const Subscription = () => {
     }
   }, [result, dispatch, history]);
 
+  const handleSubmit= (RTN, VIN, Identidad, nombreRegistrado) => {
+      dispatch(setClientData({Identidad, nombreRegistrado}))
+        start({
+            Placa: placa,
+            RTN: RTN,
+            VIN: VIN
+        })
+    }
+
   return (
       <div className="card">
           <img
@@ -64,20 +80,19 @@ const Subscription = () => {
                   <hr />
                   <Formik
                       validationSchema={schema}
-                      onSubmit={(values, actions) =>
-                          start({
-                              Placa: placa,
-                              RTN: values.RTN,
-                              VIN: values.VIN,
-                          })
+                      onSubmit={(values, actions) => {
+
+                          handleSubmit(values.RTN, values.VIN, values.Identidad, values.Nombre)
+                      }
+
                       }
                       initialValues={{
                           RTN: "",
                           VIN: "",
 
-                          Propietario: undefined,
-                          Identidad: undefined,
-                          Nombre: undefined,
+                          Propietario: false,
+                          Identidad: "",
+                          Nombre: "",
                       }}
                   >
                       {({ handleSubmit, values, isValid, touched }) => (
