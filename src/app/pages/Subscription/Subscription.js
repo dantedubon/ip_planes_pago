@@ -69,116 +69,103 @@ const Subscription = () => {
               src={process.env.PUBLIC_URL + "/logo IP.png"}
               alt=""
           />
-          <div className="card-body">
-              <div >
+          {
+              placa &&           <div className="card-body">
+                  <div >
 
-                  <h4 className="card-title">Subscripción de Plan de Pago</h4>
-                  <p className="card-description">
-                      Por favor ingrese el número de RTN del propietario según el sistema a el
-                      número de motor,VIN o Chasis
-                  </p>
-                  <hr />
-                  <Formik
-                      validationSchema={schema}
-                      onSubmit={(values, actions) => {
+                      <h4 className="card-title">Subscripción de Plan de Pago</h4>
+                      <p className="card-description">
+                          Por favor ingrese el número de RTN del propietario según el sistema a el
+                          número de motor,VIN o Chasis
+                      </p>
+                      <hr />
+                      <Formik
+                          validationSchema={schema}
+                          onSubmit={(values, actions) => {
 
-                          handleSubmit(values.RTN, values.VIN, values.Identidad, values.Nombre)
-                      }
+                              handleSubmit(values.RTN, values.VIN, values.Identidad, values.Nombre)
+                          }
 
-                      }
-                      initialValues={{
-                          RTN: "",
-                          VIN: "",
+                          }
+                          initialValues={{
+                              RTN: "",
+                              VIN: "",
 
-                          Propietario: false,
-                          Identidad: "",
-                          Nombre: "",
-                      }}
-                  >
-                      {({ handleSubmit, values, isValid, touched }) => (
-                          <Form noValidate onSubmit={handleSubmit}>
-                              <InputIp
-                                  controlId="RTN"
-                                  label="RTN*"
-                                  type="text"
-                                  name="RTN"
-                                  helpText="Ingresar el RTN que aparece en la última boleta de revisión pagada."
-                              />
-                              <InputIp
-                                  controlId="VIN"
-                                  label="Numero de Motor, Vin o Chasis*"
-                                  type="text"
-                                  name="VIN"
-                                  helpText="Ingresar los últimos 4 dígitos de motor, VIN o chasis al cual desea subscribir el pago."
-                              />
+                              Propietario: false,
+                              Identidad: "",
+                              Nombre: "",
+                          }}
+                      >
+                          {({ handleSubmit, values, isValid, touched }) => (
+                              <Form noValidate onSubmit={handleSubmit}>
+                                  <InputIp
+                                      controlId="RTN"
+                                      label="RTN*"
+                                      type="text"
+                                      name="RTN"
+                                      helpText="Ingresar el RTN que aparece en la última boleta de revisión pagada."
+                                  />
+                                  <InputIp
+                                      controlId="VIN"
+                                      label="Numero de Motor, Vin o Chasis*"
+                                      type="text"
+                                      name="VIN"
+                                      helpText="Ingresar los últimos 4 dígitos de motor, VIN o chasis al cual desea subscribir el pago."
+                                  />
 
-                              <h6>¿El vehículo se encuentra registrado a su nombre?</h6>
 
-                              <InputIp
-                                  controlId="SiEsPropietario"
-                                  label="Si"
-                                  type="radio"
-                                  value="true"
-                                  showFeedback={false}
-                                  name="Propietario"
-                                  groupClassName="form-check form-check-inline"
-                                  inputClassName="form-check-input"
-                                  labelClassName="form-check-label"
-                              />
-                              <InputIp
-                                  controlId="NoEsPropietario"
-                                  label="No"
-                                  type="radio"
-                                  value="false"
-                                  name="Propietario"
-                                  groupClassName="form-check form-check-inline"
-                                  inputClassName="form-check-input"
-                                  labelClassName="form-check-label"
-                              />
-
-                              {values.Propietario === "false" && (
                                   <InputIp
                                       controlId="Identidad"
                                       label="Identidad"
                                       type="text"
                                       name="Identidad"
+                                      helpText="Ingresar la identidad del solicitante del plan de pago."
                                   />
-                              )}
 
-                              {values.Propietario === "false" && (
+
                                   <InputIp
                                       controlId="Nombre"
                                       label="Nombre Completo"
                                       type="text"
                                       name="Nombre"
+                                      helpText="Ingresar el nombre del solicitante del plan de pago."
                                   />
-                              )}
-                              <hr />
+                                  <hr />
 
-                              {error && (
-                                  <div className="alert alert-danger alert-dismissible fade show">
-                                      <strong>Error!</strong> {error}
+                                  {error && (
+                                      <div className="alert alert-danger alert-dismissible fade show">
+                                          <strong>Error!</strong> {error}
+                                      </div>
+                                  )}
+                                  <div className="form-actions mt-3">
+                                      <button
+                                          type="submit"
+                                          className="btn btn-primary mr-1"
+                                          data-toggle="modal"
+                                          data-target="#exampleModal"
+                                          disabled={!isValid || isEmpty(touched)}
+                                      >
+                                          Enviar
+                                      </button>
+                                      <button type="button" className="btn btn-secondary" onClick={()=> history.push(process.env.REACT_APP_CONSULTA_VEHICULAR)}>
+                                          Cancelar
+                                      </button>
                                   </div>
-                              )}
-                              <div className="form-actions mt-3">
-                                  <button
-                                      type="submit"
-                                      className="btn btn-primary mr-1"
-                                      data-toggle="modal"
-                                      data-target="#exampleModal"
-                                      disabled={!isValid || isEmpty(touched)}
-                                  >
-                                      Enviar
-                                  </button>
-                                  <button type="button" className="btn btn-secondary">
-                                      Cancelar
-                                  </button>
-                              </div>
-                          </Form>
-                      )}
-                  </Formik>
+                              </Form>
+                          )}
+                      </Formik>
+                  </div>
               </div>
-          </div>
+          }
+          {
+              !placa &&
+              <div className="card-body">
+                  <div className="card-description">
+                        Ingrese a  <a href={process.env.REACT_APP_CONSULTA_VEHICULAR}>consulta tasa vehicular</a>
+                  </div>
+              </div>
+          }
+
       </div>
   );
 };

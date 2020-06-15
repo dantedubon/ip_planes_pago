@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {useParams} from 'react-router-dom'
+import {useHistory, useParams} from 'react-router-dom'
 import useAPICall from "../../useAPICall";
 import {GetPlanPago} from "../../services/cuotasApi";
 import {EstadoCuenta} from "../../components/EstadoCuenta";
@@ -8,8 +8,13 @@ import {ProyeccionMultas} from "../../components/ProyeccionMultas";
 
 const PlanPagos = () => {
     const {planId} = useParams();
+    const history = useHistory();
+    if(!planId){
+        history.push("/")
+    }
 
-    const [planPagos,, getPlanPagos] = useAPICall(GetPlanPago)
+    const [planPagos,error, getPlanPagos] = useAPICall(GetPlanPago)
+
     const {placa, propietario, rtn, solicitanteNombre,
         fechaEmision,
         solicitanteIdentificacion, estadoCuenta,distribucionCuotas, proyeccionMultas} = planPagos || {};
@@ -38,7 +43,7 @@ const PlanPagos = () => {
                 alt=""
             />
             {
-                planPagos &&  <div className="card-body">
+                !error && planPagos &&  <div className="card-body">
                     <div id="subscription">
                         <h4 className="card-title">Plan de Pago # {planId}</h4>
                         <p className="card-description">
@@ -75,6 +80,12 @@ const PlanPagos = () => {
                         </div>
                     </div>
                 </div>
+            }
+            {
+                error && <div className="card-body">
+                     <h3 className="message-error-text">{error}</h3>
+                </div>
+
             }
 
         </div>

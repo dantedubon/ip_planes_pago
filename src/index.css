@@ -246,3 +246,7 @@ body {
 .total-row {
     background-color: aliceblue;
 }
+
+.message-error-text {
+    text-align: center;
+}
