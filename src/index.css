@@ -242,3 +242,7 @@ body {
 .modal-title{
     color: white;
 }
+
+.total-row {
+    background-color: aliceblue;
+}

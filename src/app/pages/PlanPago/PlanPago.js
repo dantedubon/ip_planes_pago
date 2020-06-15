@@ -4,6 +4,7 @@ import useAPICall from "../../useAPICall";
 import {GetPlanPago} from "../../services/cuotasApi";
 import {EstadoCuenta} from "../../components/EstadoCuenta";
 import {DistribucionCuotas} from "../../components/DistribucionCuotas";
+import {ProyeccionMultas} from "../../components/ProyeccionMultas";
 
 const PlanPagos = () => {
     const {planId} = useParams();
@@ -11,7 +12,7 @@ const PlanPagos = () => {
     const [planPagos,, getPlanPagos] = useAPICall(GetPlanPago)
     const {placa, propietario, rtn, solicitanteNombre,
         fechaEmision,
-        solicitanteIdentificacion, estadoCuenta,distribucionCuotas} = planPagos || {};
+        solicitanteIdentificacion, estadoCuenta,distribucionCuotas, proyeccionMultas} = planPagos || {};
 
     useEffect(() =>{
         getPlanPagos({planId})
@@ -70,6 +71,7 @@ const PlanPagos = () => {
                             </ul>
                             <EstadoCuenta estadoCuenta={estadoCuenta}/>
                             <DistribucionCuotas distribucion={mapDistribucionCuotas(distribucionCuotas)}/>
+                            <ProyeccionMultas proyeccionMultas={proyeccionMultas}/>
                         </div>
                     </div>
                 </div>

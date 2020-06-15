@@ -33,13 +33,13 @@ export const DistribucionCuotas = ({distribucion}) => {
                                 <td>{currencyFormatter(periodo.tuav)}</td>
                                 <td>{currencyFormatter(periodo.tvm)}</td>
                                 <td>{currencyFormatter(periodo.cspssxxi)}</td>
-                                <td>{periodo.total}</td>
+                                <td>{currencyFormatter(periodo.total)}</td>
                                 <td>{periodo.comprobante}</td>
                             </tr>
                         );
                     })}
 
-                    <tr>
+                    <tr className="total-row">
                         <th scope="row">Total</th>
                         <td>{currencyFormatter(distribucionCuotas.tuav)}</td>
                         <td>{currencyFormatter(distribucionCuotas.tvm)}</td>

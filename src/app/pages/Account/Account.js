@@ -11,6 +11,7 @@ import {useGoogleReCaptcha} from 'react-google-recaptcha-v3';
 import {useHistory} from "react-router-dom";
 import {DistribucionCuotas} from "../../components/DistribucionCuotas";
 import {EstadoCuenta} from "../../components/EstadoCuenta";
+import {ProyeccionMultas} from "../../components/ProyeccionMultas";
 
 
 const Cuotas = ({cuotas, setSelectedCuota}) => {
@@ -89,6 +90,8 @@ const Account = () => {
     const [resultDistribucion, , startDistribucion] = useAPICall(
         fetchDistribucionCuotas
     );
+
+    const {proyeccionMultas} = resultDistribucion || {}
 
     const [token, setToken] = useState(null);
 
@@ -175,6 +178,8 @@ const Account = () => {
                         </p>
                         <Cuotas cuotas={cuotas} setSelectedCuota={setSelectedCuota}/>
                         <DistribucionCuotas distribucion={resultDistribucion}/>
+                        <ProyeccionMultas proyeccionMultas={proyeccionMultas}/>
+
                         <div className="d-flex justify-content-center mt-4">
                             {selectedCuota !== 0 && <Button onClick={acceptPlan}>
                                 Aceptar Plan de Pago
