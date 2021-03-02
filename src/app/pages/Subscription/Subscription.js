@@ -17,8 +17,9 @@ const schema = yup.object({
   RTN: yup.string().required("Campo Requerido"),
 
   VIN: yup
-    .number()
-    .typeError("Este campo solo acepta numeros")
+    .string()
+    .min(4, 'Debe de ser exactamente 4 digitos')
+    .max(4, 'Debe de ser exactamente 4 digitos')
     .required("Campo Requerido"),
   Propietario: yup.boolean().required("Debe seleccionar una opción"),
   Identidad: yup.string().when("Propietario", {
